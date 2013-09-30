@@ -1,6 +1,9 @@
 django-oml
 ========================
 
+.. image:: https://travis-ci.org/RouteAtlas/django-oml.png?branch=master
+    :target: https://travis-ci.org/RouteAtlas/django-oml
+
 Welcome to the documentation for django-oml!
 
 OML means Object Moderation Layer, the idea is to have a mixin model that

@@ -1,7 +1,6 @@
+from .managers import ModeratedModelManager
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-
-from .managers import ModeratedModelManager
 
 try:
     from django.contrib.auth import get_user_model
@@ -22,5 +21,8 @@ STATUS_CHOICES = (
 class ModeratedModel(models.Model):
     authorized_by = models.ForeignKey(User, null=True, blank=True)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=STATUS_PENDING)
-    approval_date = models.DateTimeField(null=True, blank=True)
+    status_date = models.DateTimeField(null=True, blank=True)
     objects = ModeratedModelManager()
+
+    class Meta:
+        abstract = True

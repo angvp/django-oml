@@ -15,11 +15,8 @@ class TestModel(ModeratedModel):
 
 class ModeratedModelTestCase(TestCase):
 
-    def setUp(self):
-        self.item = TestModel()
-
     def _create_test_item(self, content="basic content", status=STATUS_PENDING):
-        item = self.item
+        item = TestModel()
         item.test_field = content
         item.status = status
         item.save()
@@ -39,3 +36,19 @@ class ModeratedModelTestCase(TestCase):
         item = self._create_test_item(status=STATUS_REJECTED, content="this must be rejected")
         self.assertIsNotNone(TestModel.objects.accepted())
         self.assertEquals(item.test_field, "this must be rejected")
+
+    def test_count(self):
+        """
+        Let's create some items with different status to figure out if count
+        is working fine
+        """
+        self._create_test_item(status=STATUS_REJECTED, content="item rejected")
+        self._create_test_item(status=STATUS_REJECTED, content="item rejected")
+        self._create_test_item(status=STATUS_REJECTED, content="item rejected")
+        self._create_test_item(status=STATUS_PENDING, content="item pending")
+        self._create_test_item(status=STATUS_PENDING, content="item pending")
+        self._create_test_item(status=STATUS_ACCEPTED, content="item accepted")
+        self.assertEquals(TestModel.objects.accepted().count(), 1)
+        self.assertEquals(TestModel.objects.pending().count(), 2)
+        self.assertEquals(TestModel.objects.rejected().count(), 3)
+        self.assertEquals(TestModel.objects.count(), 6)

@@ -5,6 +5,7 @@ django-oml tests
 
 from .models import (ModeratedModel, STATUS_ACCEPTED, STATUS_PENDING,
                      STATUS_REJECTED)
+from django.contrib.auth.models import User
 from django.db import models
 from django.test import TestCase
 
@@ -14,6 +15,10 @@ class TestModel(ModeratedModel):
 
 
 class ModeratedModelTestCase(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create(username="moderator", password="moderator",
+                                        email="example@example.com")
 
     def _create_test_item(self, content="basic content", status=STATUS_PENDING):
         item = TestModel()
@@ -52,3 +57,15 @@ class ModeratedModelTestCase(TestCase):
         self.assertEquals(TestModel.objects.pending().count(), 2)
         self.assertEquals(TestModel.objects.rejected().count(), 3)
         self.assertEquals(TestModel.objects.count(), 6)
+
+    def test_model_method_accept(self):
+        item = self._create_test_item()
+        self.assertEquals(item.status, STATUS_PENDING)
+        item.accept(self.user)
+        self.assertEquals(item.status, STATUS_ACCEPTED)
+
+    def test_model_method_reject(self):
+        item = self._create_test_item()
+        self.assertEquals(item.status, STATUS_PENDING)
+        item.reject(self.user)
+        self.assertEquals(item.status, STATUS_REJECTED)

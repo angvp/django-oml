@@ -3,6 +3,11 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from managers import ModeratedModelManager
 
+try:
+    from django.utils import timezone
+except ImportError:
+    from datetime import datetime as timezone
+
 USER_MODEL = getattr(settings, 'USER_MODEL', None) or \
              getattr(settings, 'AUTH_USER_MODEL', None) or \
              'auth.User'
@@ -23,6 +28,24 @@ class ModeratedModel(models.Model):
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=STATUS_PENDING, editable=False)
     status_date = models.DateTimeField(null=True, blank=True, editable=False)
     objects = ModeratedModelManager()
+
+    def accept(self, user):
+        """Set status accepted to the current item
+        :param user: user who is approving the content
+        """
+        self.status = STATUS_ACCEPTED
+        self.authorized_by = user
+        self.status_date = timezone.now()
+        self.save()
+
+    def reject(self, user):
+        """Set status rejected to the current item
+        :param user: user who is approving the content
+        """
+        self.status = STATUS_REJECTED
+        self.authorized_by = user
+        self.status_date = timezone.now()
+        self.save()
 
     class Meta:
         abstract = True

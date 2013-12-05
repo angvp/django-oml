@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib import admin
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from managers import ModeratedModelManager
@@ -49,3 +50,23 @@ class ModeratedModel(models.Model):
 
     class Meta:
         abstract = True
+
+
+class ModelAdminOml(admin.ModelAdmin):
+    """
+    Extension of ModelAdmin
+    """
+    
+    def save_form(self, request, form, change, **kwargs):
+        """
+        Given a ModelForm return an unsaved instance. ``change`` is True if
+        the object is being changed, and False if it's being added.
+        """
+        form = super(ModelAdminOml, self).save_form(request, form, change)
+
+        if not request.user.group.id == 1:
+            form.status = STATUS_PENDING
+        form.authorized_by = request.user
+        form.status_date = timezone.now()    
+                
+        return form

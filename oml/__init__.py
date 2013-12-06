@@ -1,3 +1,3 @@
-"<Include a description of your project>"
+"An app that allows you moderate content"
 
-__version__ = '0.0.0'
+__version__ = '0.0.1'

@@ -25,10 +25,12 @@ STATUS_CHOICES = (
 OML_EXCLUDE_MODERATED = False
 OML_EXCLUDED_GROUPS = []
 
+
 class ModeratedModel(models.Model):
     authorized_by = models.ForeignKey(USER_MODEL, null=True, blank=True,
-            editable=False)
-    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=STATUS_PENDING, editable=False)
+                                      editable=False)
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES,
+                              default=STATUS_PENDING, editable=False)
     status_date = models.DateTimeField(null=True, blank=True, editable=False)
     objects = ModeratedModelManager()
 
@@ -58,7 +60,7 @@ class ModelAdminOml(admin.ModelAdmin):
     """
     Extension of ModelAdmin
     """
-    
+
     def save_form(self, request, form, change, **kwargs):
         """
         Given a ModelForm return an unsaved instance. ``change`` is True if
@@ -66,10 +68,10 @@ class ModelAdminOml(admin.ModelAdmin):
         """
         form = super(ModelAdminOml, self).save_form(request, form, change)
 
-        if (not OML_EXCLUDE_MODERATED or 
-            request.user.group.id not in OML_EXCLUDED_GROUPS):
-                form.status = STATUS_PENDING
+        if not OML_EXCLUDE_MODERATED or (request.user.group.id not in
+                                         OML_EXCLUDED_GROUPS):
+            form.status = STATUS_PENDING
         form.authorized_by = request.user
-        form.status_date = timezone.now()    
-                
+        form.status_date = timezone.now()
+
         return form

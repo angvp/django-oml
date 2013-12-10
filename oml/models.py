@@ -30,7 +30,7 @@ OML_EXCLUDED_GROUPS = OML_CONFIG['OML_EXCLUDED_GROUPS']
 
 
 class LogModeratedModel(models.Model):
-    content_type = models.CharField(max_length=200, db_index=True)
+    content_type = models.ForeignKey(ContentType)
     object_id = models.IntegerField(db_index=True)
     object_dump = models.TextField()
 
@@ -45,13 +45,15 @@ class ModeratedModel(models.Model):
     objects = ModeratedModelManager()
 
     def accept(self, user):
-        """Set status accepted to the current item
+        """
+        Set status accepted to the current item
         :param user: user who is approving the content
         """
 
         # Search in moderated logs
         logs = LogModeratedModel.objects.filter(
-            content_type=self.__class__.__name__, object_id=self.id)
+            content_type=ContentType.objects.get_for_model(type(self)),
+            object_id=self.id)
         # Delete the log if exists
         if logs:
             logs[0].delete()
@@ -62,22 +64,24 @@ class ModeratedModel(models.Model):
         self.save()
 
     def reject(self, user):
-        """Set status rejected to the current item
+        """
+        Set status rejected to the current item
         :param user: user who is approving the content
         """
         # Search in moderated logs
         logs = LogModeratedModel.objects.filter(
-            content_type=self.__class__.__name__, object_id=self.id)
+            content_type=ContentType.objects.get_for_model(type(self)),
+            object_id=self.id)
 
         if logs:
             # Replace with the last accepted
-            # object
-            # and delete the log
+            # object and delete the log
             for obj_original in serializers.deserialize('json',
                                                         logs[0].object_dump):
                 obj_original.save()
                 logs[0].delete()
-            return
+            # Rejected=True & Deleted=False
+            return (True, False)
         # If there is no logs, then we
         # reject the creation of the object
         self.status = STATUS_REJECTED
@@ -85,6 +89,8 @@ class ModeratedModel(models.Model):
         self.status_date = timezone.now()
         self.save()
         self.delete()
+        # Rejected=True & Deleted=True
+        return (True, True)
 
     class Meta:
         abstract = True
@@ -101,9 +107,6 @@ class ModelAdminOml(admin.ModelAdmin):
         the object is being changed, and False if it's being added.
         """
 
-        # Save the original object in LogModeratedModel
-        #LogModeratedModel.ob
-
         # Store the object on the DB
         form = super(ModelAdminOml, self).save_form(request, form, change)
 
@@ -113,6 +116,7 @@ class ModelAdminOml(admin.ModelAdmin):
             # store the log of the moderated model
             content_type = ContentType.objects.get_for_model(
                 form, for_concrete_model=False)
+            # Save the original object in LogModeratedModel
             obj_data = serializers.serialize(
                 'json', [content_type.get_object_for_this_type(id=form.id)])
             log = {

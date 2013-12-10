@@ -5,6 +5,7 @@ python:
 env:
   - DJANGO=1.4.8
   - DJANGO=1.5.4
+  - DJANGO=1.6
 install:
   - pip install -q Django==$DJANGO --use-mirrors
   - pip install -q nose --use-mirrors

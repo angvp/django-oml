@@ -17,7 +17,7 @@ On config set up a dictionary ::
 		'OML_EXCLUDE_MODERATED': True/False,
 
                 # List of groups id that will be omitted
-		'OML_EXCLUDED_GROUPS': [1,]
+		'OML_EXCLUDED_GROUPS': []
 
 	}
 

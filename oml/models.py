@@ -5,7 +5,9 @@ from django.core import serializers
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from managers import ModeratedModelManager
+
 import ipdb
+
 try:
     from django.utils import timezone
 except ImportError:
@@ -89,7 +91,7 @@ class ModeratedModel(models.Model):
         self.delete()
         # Rejected=True & Deleted=True
         return (True, True)
-    
+
     def save_form_log_moderated(self, status=None):
         if status == STATUS_ACCEPTED:
             # store the log of the moderated model
@@ -143,5 +145,5 @@ class ModelAdminOml(admin.ModelAdmin):
         form.save_form_log_moderated(status, form)
         # Change status if necesary
         form.define_status_of_object()
-        
+
         return form

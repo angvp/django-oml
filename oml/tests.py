@@ -82,9 +82,17 @@ class ModeratedModelTestCase(TestCase):
         pass
 
     def test_model_method_accept_w_accepted(self):
-        pass
+        item = self._create_test_item(status=STATUS_ACCEPTED)
+        self.assertEquals(item.status, STATUS_ACCEPTED)
+        self.assertEquals(LogModeratedModel.objects.all().count(), 0)
+
+        item.accept(self.user)
+        self.assertEquals(item.status, STATUS_ACCEPTED)
+        self.assertEquals(LogModeratedModel.objects.all().count(), 0)
 
     def test_model_method_accept_w_pending(self):
+        # Check if a new pending object can be
+        # accepted
         item = self._create_test_item()
         self.assertEquals(item.status, STATUS_PENDING)
         self.assertEquals(LogModeratedModel.objects.all().count(), 0)
@@ -93,6 +101,8 @@ class ModeratedModelTestCase(TestCase):
         self.assertEquals(item.status, STATUS_ACCEPTED)
         self.assertEquals(LogModeratedModel.objects.all().count(), 0)
 
+        # Check if an existing object can be edited
+        # and accepted
         item.test_field = 'changed field'
         item.save_form_log_moderated(item.status)
         item.define_status_of_object(self.user)

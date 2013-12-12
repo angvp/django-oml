@@ -9,8 +9,6 @@ from django.contrib.auth.models import User, Group
 from django.db import models
 from django.test import TestCase
 
-import ipdb
-
 
 class TestModel(ModeratedModel):
     test_field = models.CharField(max_length=200)
@@ -79,7 +77,37 @@ class ModeratedModelTestCase(TestCase):
         self.assertEquals(TestModel.objects.count(), 6)
 
     def test_model_log_moderated_content_count(self):
-        pass
+        self.assertEquals(LogModeratedModel.objects.all().count(), 0)
+
+        item_a = self._create_test_item(status=STATUS_ACCEPTED)
+        item_p = self._create_test_item(status=STATUS_PENDING)
+
+        self.assertEquals(LogModeratedModel.objects.all().count(), 0)
+
+        item_p.accept(self.user)
+        item_p.test_field = 'change_p me 1'
+        item_p.save_form_log_moderated()
+        item_p.define_status_of_object(self.user)
+
+        self.assertEquals(LogModeratedModel.objects.all().count(), 1)
+
+        item_p.test_field = 'change_p me 2'
+        item_p.save_form_log_moderated()
+        item_p.define_status_of_object(self.user)
+
+        self.assertEquals(LogModeratedModel.objects.all().count(), 1)
+
+        item_a.test_field = 'change_a me 1'
+        item_a.save_form_log_moderated()
+        item_a.define_status_of_object(self.user)
+
+        self.assertEquals(LogModeratedModel.objects.all().count(), 2)
+
+        item_a.accept(self.user)
+        self.assertEquals(LogModeratedModel.objects.all().count(), 1)
+
+        item_p.accept(self.user)
+        self.assertEquals(LogModeratedModel.objects.all().count(), 0)
 
     def test_model_method_accept_w_accepted(self):
         item = self._create_test_item(status=STATUS_ACCEPTED)
@@ -104,7 +132,7 @@ class ModeratedModelTestCase(TestCase):
         # Check if an existing object can be edited
         # and accepted
         item.test_field = 'changed field'
-        item.save_form_log_moderated(item.status)
+        item.save_form_log_moderated()
         item.define_status_of_object(self.user)
 
         self.assertEquals(item.status, STATUS_PENDING)
@@ -117,16 +145,66 @@ class ModeratedModelTestCase(TestCase):
         self.assertEquals(LogModeratedModel.objects.all().count(), 0)
 
     def test_model_method_accept_w_rejected(self):
-        pass
+        # Check if a new object with rejected status
+        # can be accepted
+        item = self._create_test_item(status=STATUS_REJECTED)
+        self.assertEquals(item.status, STATUS_REJECTED)
+        self.assertEquals(LogModeratedModel.objects.all().count(), 0)
+
+        item.accept(self.user)
+        self.assertEquals(item.status, STATUS_ACCEPTED)
+        self.assertEquals(LogModeratedModel.objects.all().count(), 0)
 
     def test_model_method_reject_w_accepted(self):
-        item = self._create_test_item()
-        self.assertEquals(item.status, STATUS_PENDING)
+        # Rejecting a rejected object should noy
+        # modify it
+        item = self._create_test_item(status=STATUS_ACCEPTED)
+        self.assertEquals(item.status, STATUS_ACCEPTED)
+        self.assertEquals(LogModeratedModel.objects.all().count(), 0)
+
         item.reject(self.user)
-        self.assertEquals(item.status, STATUS_REJECTED)
+        self.assertEquals(item.status, STATUS_ACCEPTED)
+        self.assertEquals(LogModeratedModel.objects.all().count(), 0)
 
     def test_model_method_reject_w_pending(self):
-        pass
+        # Check if a new pending object is deleted
+        # when rejected
+        item = self._create_test_item()
+        self.assertEquals(item.status, STATUS_PENDING)
+        self.assertEquals(LogModeratedModel.objects.all().count(), 0)
+
+        item.reject(self.user)
+        self.assertEquals(TestModel.objects.all().count(), 0)
+        self.assertEquals(LogModeratedModel.objects.all().count(), 0)
+
+        # Check if an pending object with a previous
+        # accepted state is reverted when rejected
+        item = self._create_test_item()
+        item.accept(self.user)
+        self.assertEquals(item.status, STATUS_ACCEPTED)
+
+        item.test_field = 'changed field'
+        item.save_form_log_moderated()
+        item.define_status_of_object(self.user)
+
+        self.assertEquals(item.status, STATUS_PENDING)
+        self.assertEqual(item.test_field, 'changed field')
+        self.assertEquals(LogModeratedModel.objects.all().count(), 1)
+
+        item.reject(self.user)
+        # Refresh the item
+        item_updated = TestModel.objects.get(id=item.id)
+        self.assertEquals(item_updated.status, STATUS_ACCEPTED)
+        self.assertEqual(item_updated.test_field, 'basic content')
+        self.assertEquals(LogModeratedModel.objects.all().count(), 0)
 
     def test_model_method_reject_w_rejected(self):
-        pass
+        # Rejecting a rejected object should noy
+        # modify it
+        item = self._create_test_item(status=STATUS_REJECTED)
+        self.assertEquals(item.status, STATUS_REJECTED)
+        self.assertEquals(LogModeratedModel.objects.all().count(), 0)
+
+        item.reject(self.user)
+        self.assertEquals(item.status, STATUS_REJECTED)
+        self.assertEquals(LogModeratedModel.objects.all().count(), 0)

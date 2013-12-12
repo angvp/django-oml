@@ -5,7 +5,7 @@ from django.core import serializers
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from managers import ModeratedModelManager
-
+import ipdb
 try:
     from django.utils import timezone
 except ImportError:
@@ -45,8 +45,7 @@ class ModeratedModel(models.Model):
     objects = ModeratedModelManager()
 
     def accept(self, user):
-        """
-        Set status accepted to the current item
+        """Set status accepted to the current item
         :param user: user who is approving the content
         """
 
@@ -64,8 +63,7 @@ class ModeratedModel(models.Model):
         self.save()
 
     def reject(self, user):
-        """
-        Set status rejected to the current item
+        """Set status rejected to the current item
         :param user: user who is approving the content
         """
         # Search in moderated logs
@@ -91,6 +89,32 @@ class ModeratedModel(models.Model):
         self.delete()
         # Rejected=True & Deleted=True
         return (True, True)
+    
+    def save_form_log_moderated(self, status=None):
+        if status == STATUS_ACCEPTED:
+            # store the log of the moderated model
+            content_type = ContentType.objects.get_for_model(
+                self, for_concrete_model=False)
+            # Save the original object in LogModeratedModel
+            obj_data = serializers.serialize(
+                'json', [content_type.get_object_for_this_type(id=self.id)])
+            log = {
+                'content_type': content_type,
+                'object_id': self.id,
+                'object_dump': obj_data,
+            }
+            LogModeratedModel.objects.create(**log)
+
+    def define_status_of_object(self, user):
+        try:
+            if not OML_EXCLUDE_MODERATED or (user.group.id not in
+                                             OML_EXCLUDED_GROUPS):
+                self.status = STATUS_PENDING
+        except AttributeError:
+            # If either OML_EXCLUDE... or user
+            # raises and error, there is a improper
+            # configuration
+            pass
 
     class Meta:
         abstract = True
@@ -107,27 +131,17 @@ class ModelAdminOml(admin.ModelAdmin):
         the object is being changed, and False if it's being added.
         """
 
+        # Save the original object in LogModeratedModel
+        #LogModeratedModel.ob
+
         # Store the object on the DB
+        ipdb.set_trace()
         form = super(ModelAdminOml, self).save_form(request, form, change)
 
         status = getattr(form, 'status', None)
-
-        if status == STATUS_ACCEPTED:
-            # store the log of the moderated model
-            content_type = ContentType.objects.get_for_model(
-                form, for_concrete_model=False)
-            # Save the original object in LogModeratedModel
-            obj_data = serializers.serialize(
-                'json', [content_type.get_object_for_this_type(id=form.id)])
-            log = {
-                'content_type': content_type,
-                'object_id': form.id,
-                'object_dump': obj_data,
-            }
-            LogModeratedModel.objects.create(**log)
-
-        if not OML_EXCLUDE_MODERATED or (request.user.group.id not in
-                                         OML_EXCLUDED_GROUPS):
-            form.status = STATUS_PENDING
-
+        # Store the log of the moderated model
+        form.save_form_log_moderated(status, form)
+        # Change status if necesary
+        form.define_status_of_object()
+        
         return form

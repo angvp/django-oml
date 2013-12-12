@@ -16,7 +16,7 @@ def read_file(filename):
 setup(
     name='django-oml',
     version=__import__('oml').__version__,
-    author=u'Ángel Velásquez, Agustín Cangiani',
+    author=u'Angel Velasquez, Agustín Cangiani',
     author_email='angvp@archlinux.org, cangiani@gmail.com',
     packages=find_packages(),
     include_package_data=True,

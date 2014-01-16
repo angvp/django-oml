@@ -122,9 +122,16 @@ class ModeratedModel(models.Model):
 
     def define_status_of_object(self, user):
         try:
+            """
             if not OML_EXCLUDE_MODERATED or (user.group.id not in
                                              OML_EXCLUDED_GROUPS):
                 self.status = STATUS_PENDING
+            """
+            self.status = STATUS_PENDING
+
+            if OML_EXCLUDE_MODERATED and (user.group.id in
+                                             OML_EXCLUDED_GROUPS):
+                self.status = STATUS_ACCEPTED
         except AttributeError:
             # If either OML_EXCLUDE... or user
             # raises and error, there is a improper
@@ -147,12 +154,10 @@ class ModelAdminOml(admin.ModelAdmin):
         """
 
         # Save the original object in LogModeratedModel
-        #LogModeratedModel.ob
 
         # Store the object on the DB
         form = super(ModelAdminOml, self).save_form(request, form, change)
 
-        status = getattr(form, 'status', None)
         # Store the log of the moderated model
         form.save_form_log_moderated()
         # Change status if necesary

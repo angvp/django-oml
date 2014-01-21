@@ -11,8 +11,8 @@ django-oml
    :target: https://requires.io/github/RouteAtlas/django-oml/requirements/?branch=master
    :alt: Requirements Status
    
-.. image:: landscape.io/github/RouteAtlas/django-oml/master/landscape.png
-   :target: landscape.io/github/RouteAtlas/django-oml/master
+.. image:: https://landscape.io/github/RouteAtlas/django-oml/master/landscape.png
+   :target: https://landscape.io/github/RouteAtlas/django-oml/master
    :alt: Code Health
    
 .. image:: https://d2weczhvl823v0.cloudfront.net/RouteAtlas/django-oml/trend.png

@@ -5,10 +5,13 @@ python:
 env:
   - DJANGO=1.5.4
   - DJANGO=1.6
+  - DJANGO=1.6.1
 install:
   - pip install -q Django==$DJANGO --use-mirrors
-  - pip install -q nose --use-mirrors
-  - pip install -q django-nose --use-mirrors
+  - pip install -q nose django-nose --use-mirrors
+  - pip install -q coverage coveralls --use-mirrors
   - pip install -e . --use-mirrors
 script:
-  - python setup.py test
+  - coverage run --source oml setup.py test
+after_success:
+  - coveralls

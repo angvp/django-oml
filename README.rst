@@ -3,6 +3,22 @@ django-oml
 
 .. image:: https://travis-ci.org/RouteAtlas/django-oml.png?branch=master
     :target: https://travis-ci.org/RouteAtlas/django-oml
+    
+.. image:: https://coveralls.io/repos/RouteAtlas/django-oml/badge.png?branch=master
+  :target: https://coveralls.io/r/RouteAtlas/django-oml?branch=master
+
+.. image:: https://requires.io/github/RouteAtlas/django-oml/requirements.png?branch=master
+   :target: https://requires.io/github/RouteAtlas/django-oml/requirements/?branch=master
+   :alt: Requirements Status
+   
+.. image:: landscape.io/github/RouteAtlas/django-oml/master/landscape.png
+   :target: landscape.io/github/RouteAtlas/django-oml/master
+   :alt: Code Health
+   
+.. image:: https://d2weczhvl823v0.cloudfront.net/RouteAtlas/django-oml/trend.png
+   :alt: Bitdeli badge
+   :target: https://bitdeli.com/free
+
 
 Welcome to the documentation for django-oml!
 
@@ -33,9 +49,4 @@ You can run the tests with via::
 or::
 
     python runtests.py
-
-
-.. image:: https://d2weczhvl823v0.cloudfront.net/RouteAtlas/django-oml/trend.png
-   :alt: Bitdeli badge
-   :target: https://bitdeli.com/free
 

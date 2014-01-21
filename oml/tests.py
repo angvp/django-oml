@@ -13,6 +13,9 @@ from django.test import TestCase
 class TestModel(ModeratedModel):
     test_field = models.CharField(max_length=200)
 
+    def __unicode__(self):
+        return "%s - %s" % (self.id, self.test_field)
+
 
 class ModeratedModelTestCase(TestCase):
 

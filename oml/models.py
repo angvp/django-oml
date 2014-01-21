@@ -35,6 +35,9 @@ class LogModeratedModel(models.Model):
     object_id = models.IntegerField(db_index=True)
     object_dump = models.TextField()
 
+    def __unicode__(self):
+        pass
+
 
 class ModeratedModel(models.Model):
     authorized_by = models.ForeignKey(USER_MODEL, null=True, blank=True,
@@ -44,6 +47,9 @@ class ModeratedModel(models.Model):
                               db_index=True)
     status_date = models.DateTimeField(null=True, blank=True, editable=False)
     objects = ModeratedModelManager()
+
+    def __unicode__(self):
+        pass
 
     def accept(self, user):
         """Set status accepted to the current item
@@ -122,11 +128,6 @@ class ModeratedModel(models.Model):
 
     def define_status_of_object(self, user):
         try:
-            """
-            if not OML_EXCLUDE_MODERATED or (user.group.id not in
-                                             OML_EXCLUDED_GROUPS):
-                self.status = STATUS_PENDING
-            """
             self.status = STATUS_PENDING
 
             if OML_EXCLUDE_MODERATED and (user.group.id in
@@ -147,7 +148,7 @@ class ModelAdminOml(admin.ModelAdmin):
     Extension of ModelAdmin
     """
 
-    def save_form(self, request, form, change, **kwargs):
+    def save_form(self, request, form, change):
         """
         Given a ModelForm return an unsaved instance. ``change`` is True if
         the object is being changed, and False if it's being added.

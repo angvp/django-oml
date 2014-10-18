@@ -17,14 +17,21 @@ if not settings.configured:
             'django.contrib.auth',
             'oml',
         ),
+        MIDDLEWARE_CLASSES=(),
         SITE_ID=1,
         SECRET_KEY='this-is-just-for-tests-so-not-that-secret',
         OML_CONFIG = {'OML_EXCLUDE_MODERATED': True,
-                          'OML_EXCLUDED_GROUPS': [1,]}          
+                          'OML_EXCLUDED_GROUPS': [1,]}
     )
 
 
 from django.test.utils import get_runner
+
+try:
+    from django import setup
+    setup()
+except ImportError:
+    pass
 
 
 def runtests():

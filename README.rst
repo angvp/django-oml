@@ -50,3 +50,11 @@ or::
 
     python runtests.py
 
+
+This project plays well with the following Django versions:
+
+- Django 1.5
+- Django 1.6
+- Django 1.7 (not with python 2.6)
+
+With python 2.7 and python 2.6 (except for Django 1.7).

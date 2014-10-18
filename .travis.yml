@@ -11,6 +11,6 @@ install:
   - pip install -q nose django-nose coverage coveralls tox
   - pip install -e .
 script:
-  - coverage run --source oml setup.py test
+  - if [ $TRAVIS_PYTHON_VERSION == '2.6' ] && [ $DJANGO == '1.7' ]; then return 0; else coverage run --source oml setup.py test; fi
 after_success:
   - coveralls

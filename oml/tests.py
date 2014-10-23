@@ -20,7 +20,6 @@ class TestModel(ModeratedModel):
 class ModeratedModelTestCase(TestCase):
 
     def setUp(self):
-        #ipdb.set_trace()
         self.groups = [Group.objects.create(id=1, name='non_moderated')]
         self.groups.append(Group.objects.create(id=2,  name='moderated'))
         # Create a moderated user

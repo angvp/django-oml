@@ -4,7 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core import serializers
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from managers import ModeratedModelManager
+from .managers import ModeratedModelManager
 
 
 try:

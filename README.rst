@@ -1,20 +1,18 @@
 django-oml
 ========================
 
-.. image:: https://travis-ci.org/RouteAtlas/django-oml.png?branch=master
-    :target: https://travis-ci.org/RouteAtlas/django-oml
+.. image:: https://travis-ci.org/angvp/django-oml.png?branch=master
+    :target: https://travis-ci.org/angvp/django-oml
     
-.. image:: https://coveralls.io/repos/RouteAtlas/django-oml/badge.png?branch=master
-  :target: https://coveralls.io/r/RouteAtlas/django-oml?branch=master
 
-.. image:: https://requires.io/github/RouteAtlas/django-oml/requirements.png?branch=master
-   :target: https://requires.io/github/RouteAtlas/django-oml/requirements/?branch=master
+.. image:: https://coveralls.io/repos/angvp/django-oml/badge.svg?branch=master
+  :target: https://coveralls.io/r/angvp/django-oml?branch=master
+
+
+.. image:: https://requires.io/github/angvp/django-oml/requirements.png?branch=master
+   :target: https://requires.io/github/angvp/django-oml/requirements/?branch=master
    :alt: Requirements Status
    
-.. image:: https://d2weczhvl823v0.cloudfront.net/RouteAtlas/django-oml/trend.png
-   :alt: Bitdeli badge
-   :target: https://bitdeli.com/free
-
 
 Welcome to the documentation for django-oml!
 

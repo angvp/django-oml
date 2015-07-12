@@ -12,6 +12,10 @@ django-oml
 .. image:: https://requires.io/github/angvp/django-oml/requirements.png?branch=master
    :target: https://requires.io/github/angvp/django-oml/requirements/?branch=master
    :alt: Requirements Status
+
+.. image:: https://codeclimate.com/github/angvp/django-oml/badges/gpa.svg
+   :target: https://codeclimate.com/github/angvp/django-oml
+   :alt: Code Climate
    
 
 Welcome to the documentation for django-oml!
@@ -44,11 +48,11 @@ or::
 
     python runtests.py
 
-
 This project plays well with the following Django versions:
 
 - Django 1.5
 - Django 1.6
-- Django 1.7 (not with python 2.6)
+- Django 1.7
+- Django 1.8
 
-With python 2.7 and python 2.6 (except for Django 1.7).
+With python 2.7 and > 3.3 support.

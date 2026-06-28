@@ -1,5 +1,6 @@
-import pytest
 from unittest.mock import MagicMock, patch
+
+import pytest
 from django.contrib.admin.sites import AdminSite
 from django.contrib.auth.models import Group, User
 from django.contrib.contenttypes.models import ContentType
@@ -7,12 +8,12 @@ from django.db import models
 from django.test import RequestFactory
 
 from .models import (
-    LogModeratedModel,
-    ModelAdminOml,
-    ModeratedModel,
     STATUS_ACCEPTED,
     STATUS_PENDING,
     STATUS_REJECTED,
+    LogModeratedModel,
+    ModelAdminOml,
+    ModeratedModel,
 )
 
 
@@ -158,8 +159,10 @@ class TestReject:
         item = make_item()
         item.accept(user)
         ct = ContentType.objects.get_for_model(ItemModel)
-        LogModeratedModel.objects.create(content_type=ct, object_id=item.id, object_dump='[]')
-        LogModeratedModel.objects.create(content_type=ct, object_id=item.id, object_dump='[]')
+        LogModeratedModel.objects.create(
+            content_type=ct, object_id=item.id, object_dump="[]")
+        LogModeratedModel.objects.create(
+            content_type=ct, object_id=item.id, object_dump="[]")
         item.status = STATUS_PENDING
         result = item.reject(user)
         assert result is False

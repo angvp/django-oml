@@ -5,6 +5,7 @@ from django.core import serializers
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+
 from .managers import ModeratedModelManager
 
 USER_MODEL = getattr(settings, 'USER_MODEL', None) or \
@@ -42,6 +43,9 @@ class ModeratedModel(models.Model):
                               db_index=True)
     status_date = models.DateTimeField(null=True, blank=True, editable=False)
     objects = ModeratedModelManager()
+
+    class Meta:
+        abstract = True
 
     def __str__(self):
         return f"{self.__class__.__name__} #{self.pk}"
@@ -127,9 +131,6 @@ class ModeratedModel(models.Model):
                 id__in=OML_EXCLUDED_GROUPS).exists():
             self.status = STATUS_ACCEPTED
 
-    class Meta:
-        abstract = True
-
 
 class ModelAdminOml(admin.ModelAdmin):
     """
@@ -145,7 +146,7 @@ class ModelAdminOml(admin.ModelAdmin):
         # Save the original object in LogModeratedModel
 
         # Store the object on the DB
-        form = super(ModelAdminOml, self).save_form(request, form, change)
+        form = super().save_form(request, form, change)
 
         # Store the log of the moderated model
         form.save_form_log_moderated()

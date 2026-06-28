@@ -6,8 +6,6 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from .managers import ModeratedModelManager
-
 USER_MODEL = getattr(settings, 'USER_MODEL', None) or \
              getattr(settings, 'AUTH_USER_MODEL', None) or \
              'auth.User'
@@ -20,6 +18,17 @@ STATUS_CHOICES = (
     (STATUS_ACCEPTED, _('Accepted')),
     (STATUS_REJECTED, _('Rejected')),
 )
+
+class ModeratedModelQuerySet(models.QuerySet):
+    def accepted(self):
+        return self.filter(status=STATUS_ACCEPTED)
+
+    def pending(self):
+        return self.filter(status=STATUS_PENDING)
+
+    def rejected(self):
+        return self.filter(status=STATUS_REJECTED)
+
 
 OML_CONFIG = getattr(settings, 'OML_CONFIG', None)
 OML_EXCLUDE_MODERATED = OML_CONFIG['OML_EXCLUDE_MODERATED']
@@ -42,7 +51,7 @@ class ModeratedModel(models.Model):
                               default=STATUS_PENDING, editable=False,
                               db_index=True)
     status_date = models.DateTimeField(null=True, blank=True, editable=False)
-    objects = ModeratedModelManager()
+    objects = ModeratedModelQuerySet.as_manager()
 
     class Meta:
         abstract = True

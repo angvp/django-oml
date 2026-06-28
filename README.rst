@@ -63,8 +63,8 @@ Running the tests
 Compatibility
 -------------
 
-- Python 3.10, 3.11, 3.12
-- Django 4.2 (LTS), 5.1, 5.2 (LTS), 6.0, 6.1
+- Python 3.10, 3.11, 3.12, 3.13, 3.14
+- Django 4.2 (LTS), 5.1, 5.2 (LTS), 6.0
 
 Why did we revamp this?
 -----------------------
@@ -107,3 +107,4 @@ We looked at all of them before deciding to revamp django-oml.
 
 As of June 2026, no actively maintained package provides a simple mixin-based
 moderation layer compatible with Django 4.2+. django-oml 0.1.0 fills that gap.
+Django 6.1 support will be added once it reaches a stable release.

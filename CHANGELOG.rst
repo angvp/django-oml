@@ -48,7 +48,7 @@ drops all Python 2 / Django < 4.2 support.
 
 - Added ``oml/migrations/`` with initial migration for ``LogModeratedModel``.
 - ``tox.ini`` updated to test Python 3.10–3.12 against Django 4.2, 5.1,
-  5.2, 6.0, and 6.1.
+  5.2, and 6.0.
 
 
 0.0.3 (2015-01-01)

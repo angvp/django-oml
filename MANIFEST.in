@@ -1,5 +1,0 @@
-include AUTHORS
-include LICENSE
-include README.rst
-recursive-include oml/static *
-recursive-include oml/templates *

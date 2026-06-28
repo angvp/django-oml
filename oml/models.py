@@ -60,18 +60,18 @@ class ModeratedModel(models.Model):
         return f"{self.__class__.__name__} #{self.pk}"
 
     def accept(self, user):
-        """Set status accepted to the current item
+        """Set status to accepted for the current item.
         :param user: user who is approving the content
         """
 
         if self.status == STATUS_ACCEPTED:
             return
 
-        # Search in moderated logs
+        # Search moderated logs
         logs = LogModeratedModel.objects.filter(
             content_type=ContentType.objects.get_for_model(type(self)),
             object_id=self.id)
-        # Delete the log if exists
+        # Delete the log if it exists
         if logs:
             logs[0].delete()
 
@@ -81,8 +81,8 @@ class ModeratedModel(models.Model):
         self.save()
 
     def reject(self, user):
-        """Set status rejected to the current item
-        :param user: user who is approving the content
+        """Set status to rejected for the current item.
+        :param user: user who is rejecting the content
         """
         logs = []
 
@@ -90,7 +90,7 @@ class ModeratedModel(models.Model):
             # Rejected=True & Deleted=False
             return (False, False)
 
-        # Search in moderated logs
+        # Search moderated logs
         try:
             logs = LogModeratedModel.objects.get(
                 content_type=ContentType.objects.get_for_model(type(self)),
@@ -101,16 +101,15 @@ class ModeratedModel(models.Model):
             pass
 
         if logs:
-            # Replace with the last accepted
-            # object and delete the log
+            # Restore the last accepted object and delete the log
             for obj_original in serializers.deserialize('json',
                                                         logs.object_dump):
                 obj_original.save()
                 logs.delete()
             # Rejected=True & Deleted=False
             return (True, False)
-        # If there is no logs, then we
-        # reject the creation of the object
+        # No log exists, so reject and delete the object (pending creation)
+
         self.status = STATUS_REJECTED
         self.authorized_by = user
         self.status_date = timezone.now()
@@ -121,7 +120,7 @@ class ModeratedModel(models.Model):
 
     def save_form_log_moderated(self):
         if self.status == STATUS_ACCEPTED:
-            # store the log of the moderated model
+            # Store the log of the moderated model
             content_type = ContentType.objects.get_for_model(
                 self, for_concrete_model=False)
             # Save the original object in LogModeratedModel
@@ -166,7 +165,7 @@ class StatusListFilter(admin.SimpleListFilter):
 
 class ModelAdminOml(admin.ModelAdmin):
     """
-    Extension of ModelAdmin
+    Extension of ModelAdmin with moderation defaults.
     """
 
     list_display = ('__str__', 'status', 'authorized_by', 'status_date')
@@ -199,15 +198,12 @@ class ModelAdminOml(admin.ModelAdmin):
         Given a ModelForm return an unsaved instance. ``change`` is True if
         the object is being changed, and False if it's being added.
         """
-
-        # Save the original object in LogModeratedModel
-
-        # Store the object on the DB
+        # Store the object in the DB
         form = super().save_form(request, form, change)
 
         # Store the log of the moderated model
         form.save_form_log_moderated()
-        # Change status if necesary
+        # Update status if necessary
         form.define_status_of_object(request.user)
 
         return form

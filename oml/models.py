@@ -135,7 +135,7 @@ class ModeratedModel(models.Model):
         from django.urls import NoReverseMatch, reverse
         try:
             return reverse(
-                'admin:%s_%s_change' % (self._meta.app_label, self._meta.model_name),
+                f'admin:{self._meta.app_label}_{self._meta.model_name}_change',
                 args=[self.pk],
             )
         except NoReverseMatch:
@@ -180,7 +180,8 @@ class ModelAdminOml(admin.ModelAdmin):
         if deleted:
             self.message_user(
                 request,
-                _('%d object(s) were deleted (no prior accepted state to revert to).') % deleted,
+                _('%d object(s) were deleted (no prior accepted state to revert to).')
+                % deleted,
                 level=messages.WARNING,
             )
 

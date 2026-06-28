@@ -2,7 +2,7 @@ from django import template
 from django.contrib.contenttypes.models import ContentType
 from django.core.paginator import EmptyPage, Paginator
 
-from oml.models import ModeratedModel, STATUS_PENDING
+from oml.models import STATUS_PENDING, ModeratedModel
 
 register = template.Library()
 
@@ -36,7 +36,8 @@ def get_content_for_approval(request):
     try:
         page_obj = paginator.page(page)
     except EmptyPage:
-        page_obj = paginator.page(paginator.num_pages) if paginator.num_pages else paginator.page(1)
+        last = paginator.num_pages
+        page_obj = paginator.page(last) if last else paginator.page(1)
 
     return {
         'page_obj': page_obj,

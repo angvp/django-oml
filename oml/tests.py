@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, patch, call
+from unittest.mock import MagicMock, patch
 
 import pytest
 from django.contrib import messages
@@ -303,6 +303,7 @@ class TestModerationViews:
 
     def test_moderation_panel_renders_correct_template(self, staff_user):
         from django.http import HttpResponse
+
         from oml.views import moderation_panel
         with patch('oml.views.render', return_value=HttpResponse()) as mock_render:
             moderation_panel(self._get(staff_user))
@@ -383,7 +384,8 @@ class TestStatusListFilter:
         site = AdminSite()
         model_admin = ModelAdminOml(ItemModel, site)
         request = RequestFactory().get('/', {'status': value} if value else {})
-        f = StatusListFilter(request, {'status': value} if value else {}, ItemModel, model_admin)
+        params = {'status': value} if value else {}
+        f = StatusListFilter(request, params, ItemModel, model_admin)
         return f
 
     def test_lookups_returns_all_statuses(self):
@@ -430,8 +432,9 @@ class TestStatusListFilter:
 @pytest.mark.django_db
 class TestGetAdminUrl:
     def test_returns_url_when_model_registered(self, make_item):
-        from django.test.utils import override_settings
         import sys
+
+        from django.test.utils import override_settings
 
         site = AdminSite()
         site.register(ItemModel, ModelAdminOml)

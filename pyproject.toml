@@ -7,7 +7,7 @@ name = "django-oml"
 version = "0.1.1"
 description = "Object moderation layer for Django models"
 readme = "README.rst"
-license = { text = "GPL" }
+license = { text = "0BSD" }
 authors = [
     { name = "Angel Velasquez", email = "angvp@archlinux.org" },
     { name = "Agustín Cangiani", email = "cangiani@gmail.com" },

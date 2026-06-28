@@ -1,6 +1,16 @@
 django-oml
 ==========
 
+|ci| |coverage|
+
+.. |ci| image:: https://github.com/angvp/django-oml/actions/workflows/ci.yml/badge.svg
+   :target: https://github.com/angvp/django-oml/actions/workflows/ci.yml
+   :alt: CI
+
+.. |coverage| image:: https://codecov.io/gh/angvp/django-oml/branch/master/graph/badge.svg
+   :target: https://codecov.io/gh/angvp/django-oml
+   :alt: Coverage
+
 OML means Object Moderation Layer — a mixin model that lets you add content
 moderation (pending / accepted / rejected states) to any Django model.
 

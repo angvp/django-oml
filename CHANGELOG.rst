@@ -1,6 +1,34 @@
 Changelog
 =========
 
+0.1.1 (2026-06-27)
+-------------------
+
+**Admin enhancements**
+
+- ``ModelAdminOml`` now includes ``list_display``, ``list_filter``
+  (``StatusListFilter``), ``readonly_fields``, and bulk accept/reject actions
+  out of the box.
+- New ``StatusListFilter`` — available standalone via
+  ``from oml.admin import StatusListFilter``.
+- New ``ModeratedModel.get_admin_url()`` — returns the Django admin change URL
+  for the object, or ``''`` if the model is not registered.
+- New ``oml/admin.py`` for conventional Django import style
+  (``from oml.admin import ModelAdminOml``).
+
+**Moderation panel**
+
+- New cross-model moderation panel at ``/admin/oml/moderation/`` listing all
+  pending items across every ``ModeratedModel`` subclass. Requires
+  ``path('admin/oml/', include('oml.urls'))`` in the project ``urls.py``.
+- New ``{% load oml_tags %}`` template library with ``get_content_for_approval``
+  inclusion tag and ``pag_url`` simple tag.
+
+**Refactor**
+
+- Removed ``oml/managers.py``; manager logic inlined in ``models.py`` using
+  ``ModeratedModelQuerySet.as_manager()``. No behavioral change.
+
 0.1.0 (2026-06-27)
 -------------------
 

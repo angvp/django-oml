@@ -1,6 +1,16 @@
 Changelog
 =========
 
+0.1.2 (2026-06-28)
+-------------------
+
+**Bug fix**
+
+- Fixed packaging: templates and templatetags were not included in the wheel,
+  causing ``TemplateDoesNotExist`` errors when using the moderation panel from
+  a PyPI install. Added ``[tool.setuptools.package-data]`` to include
+  ``oml/templates/**/*``.
+
 0.1.1 (2026-06-27)
 -------------------
 

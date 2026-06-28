@@ -40,6 +40,7 @@ include = ["oml*"]
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "oml.test_settings"
 python_files = ["tests.py", "test_*.py", "*_test.py"]
+pythonpath = ["."]
 addopts = "--no-migrations"
 filterwarnings = ["ignore::pytest.PytestCollectionWarning"]
 

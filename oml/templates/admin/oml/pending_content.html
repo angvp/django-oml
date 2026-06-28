@@ -40,23 +40,21 @@
           <td>{{ item.model_name }}</td>
           <td>{{ item }}</td>
           <td>
-            <button type="submit"
-                    formaction="{% url 'oml:approve_object' item.id item.content_type_id %}">
-              {% trans "Approve" %}
-            </button>
+            <input type="submit" class="default"
+                   formaction="{% url 'oml:approve_object' item.id item.content_type_id %}"
+                   value="{% trans 'Approve' %}">
           </td>
           <td>
             {% with edit_url=item.get_admin_url %}
             {% if edit_url %}
-              <a href="{{ edit_url }}">{% trans "Edit" %}</a>
+              <a role="button" class="button" href="{{ edit_url }}">{% trans "Edit" %}</a>
             {% endif %}
             {% endwith %}
           </td>
           <td>
-            <button type="submit"
-                    formaction="{% url 'oml:reject_object' item.id item.content_type_id %}">
-              {% trans "Reject" %}
-            </button>
+            <input type="submit" class="deletelink"
+                   formaction="{% url 'oml:reject_object' item.id item.content_type_id %}"
+                   value="{% trans 'Reject' %}">
           </td>
         </tr>
         {% endfor %}
@@ -65,8 +63,9 @@
   </div>
 
   <div class="actions">
-    <button type="submit">{% trans "Approve selected" %}</button>
-    <button type="submit" formaction="{% url 'oml:reject_bulk' %}">{% trans "Reject selected" %}</button>
+    <input type="submit" class="default" value="{% trans 'Approve selected' %}">
+    <input type="submit" class="deletelink" formaction="{% url 'oml:reject_bulk' %}"
+           value="{% trans 'Reject selected' %}">
   </div>
 </form>
 

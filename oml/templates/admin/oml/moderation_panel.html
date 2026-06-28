@@ -1,6 +1,32 @@
 {% extends "admin/base_site.html" %}
 {% load i18n oml_tags %}
 
+{% block extrastyle %}
+{{ block.super }}
+<style>
+  /* form .button has specificity (0,1,1) which beats .button (0,1,0),
+     shrinking the Edit link; restore proper button padding here */
+  form a.button {
+    display: inline-block;
+    padding: 10px 15px;
+  }
+  /* Style Reject as a red button to match Django's delete action convention */
+  input.deletelink {
+    background: var(--delete-button-bg, #ba2121);
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 0.8125rem;
+    padding: 10px 15px;
+  }
+  input.deletelink:hover,
+  input.deletelink:focus {
+    background: var(--delete-button-hover-bg, #a41515);
+  }
+</style>
+{% endblock %}
+
 {% block content %}
 {% get_content_for_approval request %}
 {% endblock %}

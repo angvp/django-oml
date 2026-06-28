@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.1.4 (2026-06-28)
+
+**UI enhancements**
+
+- Moderation panel now shows a **Moderation** section on the Django admin
+  home page with a link to the pending items panel. Requires `'oml'` to be
+  listed before `'django.contrib.admin'` in `INSTALLED_APPS`.
+- Approve button uses Django admin's primary button style (blue).
+- Reject button uses Django admin's delete action style (red).
+- Edit link uses the standard admin button link style, sized consistently
+  with the other action buttons.
+
 ## 0.1.3 (2026-06-28)
 
 **New feature**

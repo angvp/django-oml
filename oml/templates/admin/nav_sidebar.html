@@ -1,0 +1,21 @@
+{% load i18n %}
+<button class="sticky toggle-nav-sidebar" id="toggle-nav-sidebar" aria-label="{% translate 'Toggle navigation' %}"></button>
+<nav class="sticky" id="nav-sidebar" aria-label="{% translate 'Sidebar' %}">
+  <input type="search" id="nav-filter"
+         placeholder="{% translate 'Start typing to filter…' %}"
+         aria-label="{% translate 'Filter navigation items' %}">
+  {% url 'oml:moderation_panel' as oml_panel_url %}
+  {% if oml_panel_url %}
+  <div class="app-oml module">
+    <table>
+      <caption>
+        <a href="{{ oml_panel_url }}" class="section">{% trans "Moderation" %}</a>
+      </caption>
+      <tr class="model-moderationpanel">
+        <th scope="row"><a href="{{ oml_panel_url }}">{% trans "Pending items" %}</a></th>
+      </tr>
+    </table>
+  </div>
+  {% endif %}
+  {% include 'admin/app_list.html' with app_list=available_apps show_changelinks=False %}
+</nav>

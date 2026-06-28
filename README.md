@@ -7,13 +7,26 @@
 
 OML means Object Moderation Layer — a mixin model that lets you add content moderation (pending / accepted / rejected states) to any Django model.
 
+## Example app
+
+A runnable blog demo with `Article` and `Comment` as moderated models is available at
+[github.com/angvp/oml-example](https://github.com/angvp/oml-example).
+
 ## Installation
 
 ```bash
 pip install django-oml
 ```
 
-Add `'oml'` to `INSTALLED_APPS` and run `migrate`.
+Add `'oml'` to `INSTALLED_APPS` **before** `django.contrib.admin` and run `migrate`:
+
+```python
+INSTALLED_APPS = [
+    'oml',  # before django.contrib.admin
+    'django.contrib.admin',
+    ...
+]
+```
 
 ## Configuration
 

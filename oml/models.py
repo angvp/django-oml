@@ -3,14 +3,9 @@ from django.contrib import admin
 from django.contrib.contenttypes.models import ContentType
 from django.core import serializers
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from .managers import ModeratedModelManager
-
-
-try:
-    from django.utils import timezone
-except ImportError:
-    from datetime import datetime as timezone
 
 USER_MODEL = getattr(settings, 'USER_MODEL', None) or \
              getattr(settings, 'AUTH_USER_MODEL', None) or \
@@ -31,25 +26,25 @@ OML_EXCLUDED_GROUPS = OML_CONFIG['OML_EXCLUDED_GROUPS']
 
 
 class LogModeratedModel(models.Model):
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.IntegerField(db_index=True)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.BigIntegerField(db_index=True)
     object_dump = models.TextField()
 
-    def __unicode__(self):
-        pass
+    def __str__(self):
+        return f"{self.content_type} #{self.object_id}"
 
 
 class ModeratedModel(models.Model):
     authorized_by = models.ForeignKey(USER_MODEL, null=True, blank=True,
-                                      editable=False)
+                                      editable=False, on_delete=models.SET_NULL)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES,
                               default=STATUS_PENDING, editable=False,
                               db_index=True)
     status_date = models.DateTimeField(null=True, blank=True, editable=False)
     objects = ModeratedModelManager()
 
-    def __unicode__(self):
-        pass
+    def __str__(self):
+        return f"{self.__class__.__name__} #{self.pk}"
 
     def accept(self, user):
         """Set status accepted to the current item
@@ -127,17 +122,10 @@ class ModeratedModel(models.Model):
             LogModeratedModel.objects.create(**log)
 
     def define_status_of_object(self, user):
-        try:
-            self.status = STATUS_PENDING
-
-            if OML_EXCLUDE_MODERATED and (user.group.id in
-                                             OML_EXCLUDED_GROUPS):
-                self.status = STATUS_ACCEPTED
-        except AttributeError:
-            # If either OML_EXCLUDE... or user
-            # raises and error, there is a improper
-            # configuration
-            pass
+        self.status = STATUS_PENDING
+        if OML_EXCLUDE_MODERATED and user.groups.filter(
+                id__in=OML_EXCLUDED_GROUPS).exists():
+            self.status = STATUS_ACCEPTED
 
     class Meta:
         abstract = True

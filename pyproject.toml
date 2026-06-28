@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "django-oml"
+version = "0.1.0"
+description = "Object moderation layer for Django models"
+readme = "README.rst"
+license = { text = "GPL" }
+authors = [
+    { name = "Angel Velasquez", email = "angvp@archlinux.org" },
+    { name = "Agustín Cangiani", email = "cangiani@gmail.com" },
+]
+requires-python = ">=3.10"
+dependencies = ["django>=4.2"]
+classifiers = [
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Framework :: Django",
+    "Framework :: Django :: 4.2",
+    "Framework :: Django :: 5.1",
+    "Framework :: Django :: 5.2",
+    "Development Status :: 4 - Beta",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/angvp/django-oml"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["oml*"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "oml.test_settings"
+python_files = ["tests.py", "test_*.py", "*_test.py"]
+addopts = "--no-migrations"
+filterwarnings = ["ignore::pytest.PytestCollectionWarning"]

@@ -1,3 +1,3 @@
-"An app that allows you moderate content"
+"Object moderation layer for Django models"
 
-__version__ = '0.0.3'
+__version__ = '0.1.0'

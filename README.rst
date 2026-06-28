@@ -1,58 +1,109 @@
 django-oml
-========================
+==========
 
-.. image:: https://travis-ci.org/angvp/django-oml.png?branch=master
-    :target: https://travis-ci.org/angvp/django-oml
-    
+OML means Object Moderation Layer — a mixin model that lets you add content
+moderation (pending / accepted / rejected states) to any Django model.
 
-.. image:: https://coveralls.io/repos/angvp/django-oml/badge.svg?branch=master
-  :target: https://coveralls.io/r/angvp/django-oml?branch=master
+Installation
+------------
 
+::
 
-.. image:: https://requires.io/github/angvp/django-oml/requirements.png?branch=master
-   :target: https://requires.io/github/angvp/django-oml/requirements/?branch=master
-   :alt: Requirements Status
+    pip install django-oml
 
-.. image:: https://codeclimate.com/github/angvp/django-oml/badges/gpa.svg
-   :target: https://codeclimate.com/github/angvp/django-oml
-   :alt: Code Climate
-   
+Add ``'oml'`` to ``INSTALLED_APPS`` and run ``migrate``.
 
-Welcome to the documentation for django-oml!
+Configuration
+-------------
 
-OML means Object Moderation Layer, the idea is to have a mixin model that
-allows you to moderate several kinds of content.
+Add an ``OML_CONFIG`` dictionary to your Django settings::
 
-On config set up a dictionary ::
+    OML_CONFIG = {
+        # Set True to let certain groups bypass moderation
+        'OML_EXCLUDE_MODERATED': True,
 
-	OML_CONFIG = {
+        # List of group IDs that skip the moderation queue
+        'OML_EXCLUDED_GROUPS': [],
+    }
 
-		# True if some groups wont be moderated
-		'OML_EXCLUDE_MODERATED': True/False,
+Usage
+-----
 
-                # List of groups id that will be omitted
-		'OML_EXCLUDED_GROUPS': []
+Inherit from ``ModeratedModel``::
 
-	}
+    from oml.models import ModeratedModel
 
-This is still a project in development
+    class Article(ModeratedModel):
+        title = models.CharField(max_length=200)
 
-Running the Tests
-------------------------------------
+The model gains:
 
-You can run the tests with via::
+- ``status`` field (``'p'`` pending / ``'a'`` accepted / ``'r'`` rejected)
+- ``authorized_by`` FK to the user who last moderated the object
+- ``status_date`` DateTimeField of the last moderation action
+- ``.objects.accepted()``, ``.pending()``, ``.rejected()`` queryset shortcuts
+- ``.accept(user)`` and ``.reject(user)`` methods
 
-    python setup.py test
+To integrate with the Django admin, use ``ModelAdminOml``::
 
-or::
+    from oml.models import ModelAdminOml
 
-    python runtests.py
+    @admin.register(Article)
+    class ArticleAdmin(ModelAdminOml):
+        pass
 
-This project plays well with the following Django versions:
+Running the tests
+-----------------
 
-- Django 1.5
-- Django 1.6
-- Django 1.7
-- Django 1.8
+::
 
-With python 2.7 and > 3.3 support.
+    pip install pytest pytest-django
+    pytest
+
+Compatibility
+-------------
+
+- Python 3.10, 3.11, 3.12
+- Django 4.2 (LTS), 5.1, 5.2 (LTS), 6.0, 6.1
+
+Why did we revamp this?
+-----------------------
+
+The original django-oml was written in 2013 and last released in 2015.
+It was archived on GitHub in 2023 with no forks and no active successors.
+
+The codebase still worked conceptually, but it had accumulated a decade of
+bit-rot: Python 2-only idioms (``ugettext_lazy``, ``__unicode__``,
+``MIDDLEWARE_CLASSES``), missing ``on_delete`` arguments that Django 2.0
+made mandatory, a silent bug in the group-exclusion logic that made the
+feature completely non-functional, and a test suite built on abandoned tools
+(``nose``, ``django-nose``). None of it would import cleanly on a modern
+Django project.
+
+Rather than throw it away and start over — or accept that content moderation
+simply has no maintained, lightweight option in the Django ecosystem — we
+chose to modernize it in place. The logic was sound; it just needed to catch
+up with ten years of Django evolution.
+
+Alternatives
+------------
+
+These are the other packages that cover similar ground.
+We looked at all of them before deciding to revamp django-oml.
+
++----------------------------------+----------------------+------------------+
+| Package                          | Last release         | Status           |
++==================================+======================+==================+
+| ``django-moderation``            | April 2022           | Unmaintained.    |
+|                                  |                      | Supports up to   |
+|                                  |                      | Django 3.2.      |
++----------------------------------+----------------------+------------------+
+| ``django-moderation-model-mixin``| November 2021        | Unmaintained.    |
+|                                  |                      | No Django 4+     |
+|                                  |                      | support.         |
++----------------------------------+----------------------+------------------+
+| ``django-gatekeeper``            | 2009                 | Abandoned.       |
++----------------------------------+----------------------+------------------+
+
+As of June 2026, no actively maintained package provides a simple mixin-based
+moderation layer compatible with Django 4.2+. django-oml 0.1.0 fills that gap.

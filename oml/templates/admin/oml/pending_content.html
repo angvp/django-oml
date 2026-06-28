@@ -66,6 +66,7 @@
 
   <div class="actions">
     <button type="submit">{% trans "Approve selected" %}</button>
+    <button type="submit" formaction="{% url 'oml:reject_bulk' %}">{% trans "Reject selected" %}</button>
   </div>
 </form>
 

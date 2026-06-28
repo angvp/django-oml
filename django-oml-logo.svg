@@ -1,0 +1,82 @@
+<svg width="1200" height="900" viewBox="0 0 1200 900" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">django-oml logo</title>
+  <desc id="desc">Original logo for django-oml: object moderation layer for Django, featuring a moderation checklist, gavel, and shield.</desc>
+
+  <defs>
+    <linearGradient id="darkGreen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#092E20"/>
+      <stop offset="1" stop-color="#14543D"/>
+    </linearGradient>
+    <linearGradient id="softGreen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2F7D4F"/>
+      <stop offset="1" stop-color="#5AA36B"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#092E20" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="900" fill="#FFFFFF"/>
+
+  <!-- Icon group -->
+  <g filter="url(#softShadow)">
+    <!-- Three-row moderation panel -->
+    <rect x="235" y="210" width="320" height="300" rx="18" stroke="url(#darkGreen)" stroke-width="14" fill="#FFFFFF"/>
+    <line x1="235" y1="310" x2="555" y2="310" stroke="url(#darkGreen)" stroke-width="10"/>
+    <line x1="235" y1="410" x2="555" y2="410" stroke="url(#darkGreen)" stroke-width="10"/>
+
+    <!-- Row 1 object cube -->
+    <g transform="translate(292 246)">
+      <path d="M40 0L78 22V66L40 88L2 66V22L40 0Z" fill="url(#softGreen)"/>
+      <path d="M40 0V43M2 22L40 43L78 22M40 43V88" stroke="#FFFFFF" stroke-width="6" stroke-linejoin="round"/>
+    </g>
+    <line x1="414" y1="265" x2="505" y2="265" stroke="url(#softGreen)" stroke-width="15" stroke-linecap="round"/>
+
+    <!-- Row 2 warning -->
+    <circle cx="332" cy="360" r="38" fill="url(#darkGreen)"/>
+    <line x1="332" y1="338" x2="332" y2="364" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round"/>
+    <circle cx="332" cy="382" r="5" fill="#FFFFFF"/>
+    <line x1="414" y1="360" x2="505" y2="360" stroke="url(#softGreen)" stroke-width="15" stroke-linecap="round"/>
+
+    <!-- Row 3 layers -->
+    <g transform="translate(292 444)">
+      <path d="M40 0L84 24L40 48L-4 24L40 0Z" fill="url(#darkGreen)"/>
+      <path d="M0 51L40 73L80 51" stroke="url(#darkGreen)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M0 77L40 99L80 77" stroke="url(#darkGreen)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <line x1="414" y1="465" x2="505" y2="465" stroke="url(#softGreen)" stroke-width="15" stroke-linecap="round"/>
+
+    <!-- Gavel -->
+    <g transform="translate(610 214) rotate(32)">
+      <rect x="105" y="73" width="48" height="195" rx="12" fill="url(#darkGreen)"/>
+      <rect x="28" y="0" width="175" height="58" rx="14" fill="url(#darkGreen)"/>
+      <rect x="59" y="54" width="113" height="70" rx="10" fill="url(#softGreen)"/>
+      <rect x="28" y="118" width="175" height="58" rx="14" fill="url(#darkGreen)"/>
+    </g>
+
+    <!-- Strike mark -->
+    <line x1="609" y1="430" x2="685" y2="430" stroke="url(#darkGreen)" stroke-width="15" stroke-linecap="round"/>
+    <line x1="624" y1="394" x2="605" y2="367" stroke="url(#softGreen)" stroke-width="10" stroke-linecap="round"/>
+    <line x1="650" y1="385" x2="650" y2="349" stroke="url(#softGreen)" stroke-width="10" stroke-linecap="round"/>
+    <line x1="676" y1="394" x2="696" y2="367" stroke="url(#softGreen)" stroke-width="10" stroke-linecap="round"/>
+
+    <!-- Shield -->
+    <path d="M850 317C898 342 941 348 981 347V428C981 502 928 556 850 589C772 556 719 502 719 428V347C759 348 802 342 850 317Z" fill="url(#softGreen)"/>
+    <path d="M807 452L839 484L907 410" stroke="#FFFFFF" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="600" y="685" text-anchor="middle" font-family="Inter, Avenir Next, Helvetica, Arial, sans-serif" font-size="112" font-weight="800" letter-spacing="-4">
+    <tspan fill="#092E20">django-</tspan><tspan fill="#4A915B">oml</tspan>
+  </text>
+
+  <!-- Divider -->
+  <line x1="190" y1="725" x2="548" y2="725" stroke="#4A915B" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="600" cy="725" r="8" fill="#4A915B"/>
+  <line x1="652" y1="725" x2="1010" y2="725" stroke="#4A915B" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Tagline -->
+  <text x="600" y="780" text-anchor="middle" font-family="Inter, Avenir Next, Helvetica, Arial, sans-serif" font-size="34" font-weight="700" letter-spacing="8" fill="#3B4545">
+    OBJECT MODERATION LAYER FOR DJANGO
+  </text>
+</svg>

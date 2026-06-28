@@ -317,6 +317,27 @@ class TestModerationViews:
         assert response.status_code == 302
         assert 'login' in response['Location']
 
+    def test_reject_bulk_rejects_multiple_items(self, make_item, staff_user):
+        from oml.views import reject_bulk
+        items = [make_item() for _ in range(3)]
+        ct = ContentType.objects.get_for_model(ItemModel)
+        data = {'items': [f'{item.pk}@{ct.pk}' for item in items]}
+        response = reject_bulk(self._post(staff_user, data))
+        assert response.status_code == 302
+        assert ItemModel.objects.count() == 0
+
+    def test_reject_bulk_skips_malformed_entries(self, staff_user):
+        from oml.views import reject_bulk
+        data = {'items': ['bad-entry', 'also-bad']}
+        response = reject_bulk(self._post(staff_user, data))
+        assert response.status_code == 302
+
+    def test_reject_bulk_skips_nonexistent_ctype(self, staff_user):
+        from oml.views import reject_bulk
+        data = {'items': ['1@99999']}
+        response = reject_bulk(self._post(staff_user, data))
+        assert response.status_code == 302
+
 
 @pytest.mark.django_db
 class TestOmlTemplateTags:

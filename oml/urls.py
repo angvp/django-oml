@@ -17,4 +17,5 @@ urlpatterns = [
         name='reject_object',
     ),
     path('approve/bulk/', views.approve_bulk, name='approve_bulk'),
+    path('reject/bulk/', views.reject_bulk, name='reject_bulk'),
 ]

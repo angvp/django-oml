@@ -54,3 +54,26 @@ def approve_bulk(request):
             continue
         obj.accept(request.user)
     return HttpResponseRedirect(reverse('oml:moderation_panel'))
+
+
+@_staff_required
+@require_POST
+def reject_bulk(request):
+    for entry in request.POST.getlist('items'):
+        try:
+            obj_id, ctype_id = entry.split('@', 1)
+        except ValueError:
+            continue
+        try:
+            ctype = ContentType.objects.get(pk=ctype_id)
+        except ContentType.DoesNotExist:
+            continue
+        model_class = ctype.model_class()
+        if model_class is None:
+            continue
+        try:
+            obj = model_class.objects.get(pk=obj_id)
+        except ObjectDoesNotExist:
+            continue
+        obj.reject(request.user)
+    return HttpResponseRedirect(reverse('oml:moderation_panel'))

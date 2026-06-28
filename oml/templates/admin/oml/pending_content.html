@@ -1,0 +1,94 @@
+{% load i18n oml_tags %}
+
+<h1>{% trans "Moderation panel" %}</h1>
+
+{% if ct_filter_menu %}
+<div class="object-tools">
+  <ul>
+    <li>
+      <span>{% trans "Filter by type:" %}</span>
+      {% for model_name, verbose_name in ct_filter_menu %}
+        <a href="?ct_filter={{ model_name }}">{{ verbose_name }}</a>
+      {% endfor %}
+      {% if ct_filter %}
+        &nbsp;|&nbsp;<a href="?">{% trans "All" %}</a>
+      {% endif %}
+    </li>
+  </ul>
+</div>
+{% endif %}
+
+{% if page_obj.object_list %}
+<form method="post" action="{% url 'oml:approve_bulk' %}">
+  {% csrf_token %}
+  <div class="results">
+    <table id="result_list">
+      <thead>
+        <tr>
+          <th scope="col"><input type="checkbox" id="oml-select-all"></th>
+          <th scope="col">{% trans "Type" %}</th>
+          <th scope="col">{% trans "Object" %}</th>
+          <th scope="col" colspan="3">{% trans "Actions" %}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in page_obj.object_list %}
+        <tr>
+          <td>
+            <input type="checkbox" name="items" value="{{ item.id }}@{{ item.content_type_id }}">
+          </td>
+          <td>{{ item.model_name }}</td>
+          <td>{{ item }}</td>
+          <td>
+            <button type="submit"
+                    formaction="{% url 'oml:approve_object' item.id item.content_type_id %}">
+              {% trans "Approve" %}
+            </button>
+          </td>
+          <td>
+            {% with edit_url=item.get_admin_url %}
+            {% if edit_url %}
+              <a href="{{ edit_url }}">{% trans "Edit" %}</a>
+            {% endif %}
+            {% endwith %}
+          </td>
+          <td>
+            <button type="submit"
+                    formaction="{% url 'oml:reject_object' item.id item.content_type_id %}">
+              {% trans "Reject" %}
+            </button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="actions">
+    <button type="submit">{% trans "Approve selected" %}</button>
+  </div>
+</form>
+
+{% if page_obj.paginator.num_pages > 1 %}
+<p class="paginator">
+  {% if page_obj.has_previous %}
+    <a href="{% pag_url request page_obj.previous_page_number %}">«</a>
+  {% endif %}
+  {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+  {% if page_obj.has_next %}
+    <a href="{% pag_url request page_obj.next_page_number %}">»</a>
+  {% endif %}
+</p>
+{% endif %}
+
+<script>
+document.getElementById('oml-select-all').addEventListener('change', function () {
+  document.querySelectorAll('input[name="items"]').forEach(function (cb) {
+    cb.checked = this.checked;
+  }, this);
+});
+</script>
+
+{% else %}
+<p>{% trans "No pending items." %}</p>
+{% endif %}

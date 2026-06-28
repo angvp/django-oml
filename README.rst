@@ -44,13 +44,61 @@ The model gains:
 - ``.objects.accepted()``, ``.pending()``, ``.rejected()`` queryset shortcuts
 - ``.accept(user)`` and ``.reject(user)`` methods
 
-To integrate with the Django admin, use ``ModelAdminOml``::
+Admin integration
+-----------------
+
+Use ``ModelAdminOml`` to get moderation features out of the box::
 
     from oml.models import ModelAdminOml
 
     @admin.register(Article)
     class ArticleAdmin(ModelAdminOml):
         pass
+
+This gives you automatically:
+
+- ``status``, ``authorized_by``, and ``status_date`` columns in the changelist
+- A **Status** filter in the sidebar
+- **Accept selected** and **Reject selected** bulk actions
+
+.. note::
+   ``reject`` on a pending object with no prior accepted state will delete the
+   object. The bulk action shows a warning with the count of deleted objects.
+
+Moderation panel
+----------------
+
+A cross-model panel that lists all pending items across every ``ModeratedModel``
+subclass in your project.
+
+1. Include the OML URLs in your project's ``urls.py``::
+
+       from django.urls import include, path
+
+       urlpatterns = [
+           ...
+           path('admin/oml/', include('oml.urls')),
+       ]
+
+2. Visit ``/admin/oml/moderation/``. The panel is restricted to staff users.
+
+The panel supports:
+
+- Filtering by content type via ``?ct_filter=<model_name>``
+- Per-item **Approve** / **Edit** / **Reject** actions
+- Bulk approve via checkbox selection
+- Pagination (50 items per page)
+
+Template tag
+~~~~~~~~~~~~
+
+The panel is rendered via an inclusion tag you can embed in your own templates::
+
+    {% load oml_tags %}
+    {% get_content_for_approval request %}
+
+This renders ``admin/oml/pending_content.html``, which you can override in your
+project's template directory.
 
 Running the tests
 -----------------

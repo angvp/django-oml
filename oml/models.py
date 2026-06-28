@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.contenttypes.models import ContentType
 from django.core import serializers
 from django.db import models
@@ -131,11 +131,58 @@ class ModeratedModel(models.Model):
                 id__in=OML_EXCLUDED_GROUPS).exists():
             self.status = STATUS_ACCEPTED
 
+    def get_admin_url(self):
+        from django.urls import NoReverseMatch, reverse
+        try:
+            return reverse(
+                'admin:%s_%s_change' % (self._meta.app_label, self._meta.model_name),
+                args=[self.pk],
+            )
+        except NoReverseMatch:
+            return ''
+
+
+class StatusListFilter(admin.SimpleListFilter):
+    title = _('status')
+    parameter_name = 'status'
+
+    def lookups(self, request, model_admin):
+        return STATUS_CHOICES
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(status=self.value())
+        return queryset
+
 
 class ModelAdminOml(admin.ModelAdmin):
     """
     Extension of ModelAdmin
     """
+
+    list_display = ('__str__', 'status', 'authorized_by', 'status_date')
+    list_filter = (StatusListFilter,)
+    readonly_fields = ('status', 'authorized_by', 'status_date')
+    actions = ['accept_selected', 'reject_selected']
+
+    @admin.action(description=_('Accept selected items'))
+    def accept_selected(self, request, queryset):
+        for obj in queryset:
+            obj.accept(request.user)
+
+    @admin.action(description=_('Reject selected items'))
+    def reject_selected(self, request, queryset):
+        deleted = 0
+        for obj in queryset:
+            result = obj.reject(request.user)
+            if result == (True, True):
+                deleted += 1
+        if deleted:
+            self.message_user(
+                request,
+                _('%d object(s) were deleted (no prior accepted state to revert to).') % deleted,
+                level=messages.WARNING,
+            )
 
     def save_form(self, request, form, change):
         """

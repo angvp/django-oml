@@ -44,10 +44,32 @@ drops all Python 2 / Django < 4.2 support.
   ``__str__`` on both models, and ``ModelAdminOml.save_form()``.
 - ``models.py`` coverage raised from 90 % to 100 %.
 
+**Admin enhancements** (ported from the original backoffice panel)
+
+- ``ModelAdminOml`` now ships with sensible defaults: ``list_display``
+  (status, authorized_by, status_date), ``list_filter`` (StatusListFilter),
+  and ``readonly_fields`` for all moderation fields.
+- New ``StatusListFilter`` — a reusable ``SimpleListFilter`` on the ``status``
+  field, available standalone via ``from oml.admin import StatusListFilter``.
+- New bulk admin actions on ``ModelAdminOml``: **Accept selected** and
+  **Reject selected**. Reject emits a ``messages.WARNING`` with the count of
+  objects deleted (those with no prior accepted state to revert to).
+- New ``ModeratedModel.get_admin_url()`` — returns the Django admin change URL
+  for the object, or ``''`` if the model is not registered in the admin.
+- New cross-model **moderation panel** at ``/admin/oml/moderation/`` listing
+  all pending items across every ``ModeratedModel`` subclass. Supports
+  per-item approve/edit/reject actions, bulk approve, content-type filtering,
+  and pagination. Requires ``path('admin/oml/', include('oml.urls'))`` in the
+  project ``urls.py``.
+- New ``{% load oml_tags %}`` template library with ``get_content_for_approval``
+  inclusion tag and ``pag_url`` simple tag.
+- New ``oml/admin.py`` re-exporting ``ModelAdminOml`` and ``StatusListFilter``
+  for conventional Django import style (``from oml.admin import ModelAdminOml``).
+
 **Packaging**
 
 - Added ``oml/migrations/`` with initial migration for ``LogModeratedModel``.
-- ``tox.ini`` updated to test Python 3.10–3.12 against Django 4.2, 5.1,
+- ``tox.ini`` updated to test Python 3.10–3.14 against Django 4.2, 5.1,
   5.2, and 6.0.
 
 

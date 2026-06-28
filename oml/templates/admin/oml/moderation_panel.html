@@ -1,0 +1,6 @@
+{% extends "admin/base_site.html" %}
+{% load i18n oml_tags %}
+
+{% block content %}
+{% get_content_for_approval request %}
+{% endblock %}
